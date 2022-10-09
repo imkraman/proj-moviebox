@@ -2,59 +2,33 @@
 import React from "react";
 import { useEffect,useState } from "react";
 import './App.css'
-import SearchIcon from './search.svg'
-import Movie from "./Movie";
 
-
-const REACT_APP_OMDB = 'https://www.omdbapi.com/?i=tt3896198&apikey=25f29436'
 
 const App = () => {
+  const [user, setUser] = useState([])
+  const id = 1
 
-
-  const [movies,setMovies] = useState([]);
-  const [searchTerm,setSearchTerm] = useState([]);
-
-  const serachMovies = async (title) =>{
-
-    const result = await fetch(`${REACT_APP_OMDB}&s=${title}`);  
-    const data = await result.json();
-    setMovies(data.Search);
-
-
+  const fetchData = () => {
+    fetch(`https://content.newtonschool.co/v1/pr/main/users?id=${id}`)
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        setUser(data[0].name)
+      })
   }
 
-  useEffect( () => {
-  
-    serachMovies('Avengers')
-
+  useEffect(() => {
+    fetchData()
   },[])
   
   return (
     <div className="app">
-      <h1>MovieBox</h1>
       
-      <div className="search">
-        <input placeholder="search for movie" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-        <img src={SearchIcon} alt="search" onClick={ ()=> serachMovies(searchTerm) } />
+      <div>
+        Name: {user.name}
       </div>
-
-      {
-        movies?.length > 0
-        
-        ?( <div className="container">
-            { movies.map((movie) => {
-               return  <Movie movie={movie} />         
-            })
-          } 
-          </div>
-        ) :(
-           <div className="empty">
-             <h2>No movie found</h2>
-             </div>
-        )
-      }
-      
-      
+       
     </div>
   );
 }
